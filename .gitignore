@@ -1,0 +1,11 @@
+android/app/google-services.json
+pubspec.lock
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+.packages
+android/.idea/
+android/exam_android.iml
+build/
+exam.iml
