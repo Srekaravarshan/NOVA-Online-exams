@@ -90,8 +90,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               ListView.builder(
                 itemBuilder: (BuildContext context, int index) => InkWell(
                   onTap: () => Navigator.of(context).pushNamed(
-                      ClassroomScreen.routeName,
-                      arguments: ClassroomScreenArgs(classId: widget.classId)),
+                      AssignmentsScreen.routeName,
+                      arguments: AssignmentsScreenArgs(
+                          classId: widget.classId,
+                          subjectId: state.subjects[index].id)),
                   child: ListTile(
                     title: Text(state.subjects[index].name),
                   ),

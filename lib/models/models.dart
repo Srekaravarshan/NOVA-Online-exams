@@ -1,5 +1,7 @@
+export 'assignment_model.dart';
 export 'class_model.dart';
 export 'failure_model.dart';
+export 'firebase_file_model.dart';
 export 'question_model.dart';
 export 'question_paper_model.dart';
 export 'subject_model.dart';

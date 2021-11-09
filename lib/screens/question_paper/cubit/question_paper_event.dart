@@ -5,7 +5,17 @@ abstract class QuestionPaperEvent {
 }
 
 class QuestionPaperLoadUser extends QuestionPaperEvent {
-  final String userId;
+  final Class classroom;
+  final int setIndex;
+  const QuestionPaperLoadUser(
+      {required this.setIndex, required this.classroom});
+}
 
-  const QuestionPaperLoadUser({required this.userId});
+class QuestionPaperCreate extends QuestionPaperEvent {
+  final String classId;
+  final String? qpId;
+  final int index;
+
+  const QuestionPaperCreate(
+      {required this.classId, this.qpId, required this.index});
 }

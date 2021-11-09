@@ -1,12 +1,16 @@
+export 'assignment/assignment_screen.dart';
+export 'assignments/assignments_screen.dart';
 export 'auth/auth_screen.dart';
 export 'classes/classes_screen.dart';
 export 'classroom/classroom_screen.dart';
+export 'create_assignment/create_assignment_screen.dart';
 export 'create_class/create_class_screen.dart';
 export 'create_subject/create_subject_screen.dart';
 export 'create_timetable/create_timetable_screen.dart';
 export 'login/login_screen.dart';
 export 'nav/nav_screen.dart';
 export 'profile/profile_screen.dart';
+export 'question_paper/question_paper_screen.dart';
 export 'signup/signup_screen.dart';
 export 'splash/splash_screen.dart';
 export 'timetable_subject/timetable_subject_screen.dart';

@@ -4,6 +4,7 @@ import 'package:exam/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../screens.dart';
 import 'cubit/timetable_subject_cubit.dart';
 
 class TimetableSubjectScreenArgs {
@@ -65,30 +66,35 @@ class _TimetableSubjectScreenState extends State<TimetableSubjectScreen> {
           onRefresh: () async {},
           child: Column(
             children: [
-              Column(
-                children: widget.classroom.questionPapers
-                    .map((questionPaper) => Row(
-                          children: [
-                            Text(questionPaper.set),
-                            _qpButton(questionPaper.status)
-                          ],
-                        ))
-                    .toList(),
-              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.classroom.questionPapers.length,
+                  itemBuilder: (context, index) => Column(children: [
+                        Text(widget.classroom.questionPapers[index].set),
+                        _qpButton(
+                            status:
+                                widget.classroom.questionPapers[index].status,
+                            index: index)
+                      ])),
               ElevatedButton(
-                  onPressed: () => addSetDialog(state, context), child: Text("Add Set"))
+                  onPressed: () => addSetDialog(state, context),
+                  child: const Text("Add Set"))
             ],
           ),
         );
     }
   }
 
-  Widget _qpButton(String status) {
+  Widget _qpButton({required String status, required int index}) {
     switch (status) {
       case 'initial':
         return TextButton(
           child: const Text('Prepare Question paper'),
-          onPressed: () {},
+          onPressed: () => Navigator.of(context).pushNamed(
+              QuestionPaperScreen.routeName,
+              arguments: QuestionPaperScreenArgs(
+                  classroom: widget.classroom, setIndex: index)),
         );
       case 'prepared':
         return TextButton(
@@ -112,7 +118,9 @@ class _TimetableSubjectScreenState extends State<TimetableSubjectScreen> {
           ),
         ),
         actions: [
-          TextButton(child: Text('Add'), onPressed: () => _submit(state, parentContext))
+          TextButton(
+              child: Text('Add'),
+              onPressed: () => _submit(state, parentContext))
         ],
       ),
     );
@@ -120,7 +128,9 @@ class _TimetableSubjectScreenState extends State<TimetableSubjectScreen> {
 
   void _submit(TimetableSubjectState state, BuildContext parentContext) {
     if (state.set.trim() != '') {
-      parentContext.read<TimetableSubjectCubit>().addSet(classroom: widget.classroom);
+      parentContext
+          .read<TimetableSubjectCubit>()
+          .addSet(classroom: widget.classroom);
     }
   }
 }

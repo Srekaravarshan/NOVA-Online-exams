@@ -2,11 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Subject extends Equatable {
-  final String? id;
+  final String id;
   final String name;
   final List materials;
 
-  Subject({this.id, required this.name, required this.materials});
+  const Subject(
+      {required this.id, required this.name, required this.materials});
+
+  static Subject empty = const Subject(id: '', name: '', materials: []);
 
   Subject copyWith({
     String? id,
@@ -27,7 +30,7 @@ class Subject extends Equatable {
   }
 
   Map<String, dynamic> toDocument() {
-    return {'name': name, 'materials': materials};
+    return {'id': id, 'name': name, 'materials': materials};
   }
 
   static Subject? fromDocument(DocumentSnapshot<Map>? doc) {

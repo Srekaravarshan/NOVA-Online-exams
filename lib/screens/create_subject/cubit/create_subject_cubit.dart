@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:exam/models/models.dart';
 import 'package:exam/repositories/repositories.dart';
+import 'package:uuid/uuid.dart';
 
 part 'create_subject_state.dart';
 
@@ -19,7 +20,8 @@ class CreateSubjectCubit extends Cubit<CreateSubjectState> {
   Future<void> submit({required String classId}) async {
     emit(state.copyWith(status: CreateSubjectStatus.submitting));
     try {
-      Subject subject = Subject(materials: const [], name: state.name);
+      Subject subject =
+          Subject(materials: const [], name: state.name, id: const Uuid().v4());
       _classesRepository.createSubject(classId: classId, subject: subject);
       emit(state.copyWith(status: CreateSubjectStatus.success));
     } catch (err) {

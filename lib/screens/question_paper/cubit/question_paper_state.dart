@@ -10,42 +10,65 @@ enum QuestionPaperStatus {
 }
 
 class QuestionPaperState extends Equatable {
-  final QuestionPaper questionPaper;
+  final String set;
+  final String mode;
+  final String qpStatus;
+  final List sections;
+  final String id;
 
   final QuestionPaperStatus status;
   final Failure failure;
 
   const QuestionPaperState(
-      {required this.questionPaper,
+      {required this.set,
+      required this.mode,
+      required this.qpStatus,
+      required this.id,
+      required this.sections,
       required this.status,
       required this.failure});
 
   factory QuestionPaperState.initial() {
-    return QuestionPaperState(
-        questionPaper: QuestionPaper.empty,
+    return const QuestionPaperState(
+        sections: [],
         status: QuestionPaperStatus.initial,
-        failure: Failure());
+        failure: Failure(),
+        qpStatus: 'initial',
+        set: '',
+        mode: 'mcq',
+        id: '');
   }
 
   QuestionPaperState copyWith({
-    QuestionPaper? questionPaper,
+    String? set,
+    String? mode,
+    String? qpStatus,
+    List? sections,
+    String? id,
     QuestionPaperStatus? status,
     Failure? failure,
   }) {
-    if ((questionPaper == null ||
-            identical(questionPaper, this.questionPaper)) &&
+    if ((set == null || identical(set, this.set)) &&
+        (mode == null || identical(mode, this.mode)) &&
+        (qpStatus == null || identical(qpStatus, this.qpStatus)) &&
+        (sections == null || identical(sections, this.sections)) &&
+        (id == null || identical(id, this.id)) &&
         (status == null || identical(status, this.status)) &&
         (failure == null || identical(failure, this.failure))) {
       return this;
     }
 
     return QuestionPaperState(
-      questionPaper: questionPaper ?? this.questionPaper,
+      set: set ?? this.set,
+      mode: mode ?? this.mode,
+      qpStatus: qpStatus ?? this.qpStatus,
+      sections: sections ?? this.sections,
+      id: id ?? this.id,
       status: status ?? this.status,
       failure: failure ?? this.failure,
     );
   }
 
   @override
-  List<Object?> get props => [questionPaper, status, failure];
+  List<Object?> get props => [sections, status, failure];
 }

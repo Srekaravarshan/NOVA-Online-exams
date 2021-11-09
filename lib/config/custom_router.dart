@@ -17,8 +17,6 @@ class CustomRouter {
         return NavScreen.route();
       case errorRouteName:
         return _errorRoute();
-      // case NavScreen.routeName:
-      //   return NavScreen.route();
       default:
         return _errorRoute();
     }
@@ -30,8 +28,6 @@ class CustomRouter {
       case ProfileScreen.routeName:
         return ProfileScreen.route(
             args: setting.arguments as ProfileScreenArgs);
-      // case EditProfileScreen.routeName:
-      //   return EditProfileScreen.route(args: setting.arguments);
       case CreateClassScreen.routeName:
         return CreateClassScreen.route();
       case ClassroomScreen.routeName:
@@ -46,6 +42,18 @@ class CustomRouter {
       case TimetableSubjectScreen.routeName:
         return TimetableSubjectScreen.route(
             args: setting.arguments as TimetableSubjectScreenArgs);
+      case QuestionPaperScreen.routeName:
+        return QuestionPaperScreen.route(
+            args: setting.arguments as QuestionPaperScreenArgs);
+      case AssignmentsScreen.routeName:
+        return AssignmentsScreen.route(
+            args: setting.arguments as AssignmentsScreenArgs);
+      case CreateAssignmentScreen.routeName:
+        return CreateAssignmentScreen.route(
+            args: setting.arguments as CreateAssignmentScreenArgs);
+      case AssignmentScreen.routeName:
+        return AssignmentScreen.route(
+            args: setting.arguments as AssignmentScreenArgs);
       default:
         return _errorRoute();
     }

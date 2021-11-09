@@ -58,7 +58,9 @@ class QuestionPaper extends Equatable {
         set: data != null ? data['set'] : '',
         mode: data != null ? data['mode'] : '',
         sections: data != null
-            ? data['sections'].map((section) => Section.fromMap(section))
+            ? data['sections']
+                .map((section) => Section.fromMap(section))
+                .toList()
             : [],
         status: data != null ? data['status'] : 'initial',
         id: data != null ? data['id'] : '');
@@ -71,7 +73,9 @@ class QuestionPaper extends Equatable {
         set: data != null ? data['set'] : '',
         mode: data != null ? data['mode'] : '',
         sections: data != null
-            ? data['sections'].map((section) => Section.fromMap(section))
+            ? data['sections']
+                .map((section) => Section.fromMap(section))
+                .toList()
             : [],
         status: data != null ? data['status'] : 'initial',
         id: data != null ? data['id'] : '');

@@ -40,7 +40,8 @@ class ClassesRepository extends BaseClassesRepository {
         .collection(Paths.classes)
         .doc(classId)
         .collection(Paths.subjects)
-        .add(subject.toDocument());
+        .doc(subject.id)
+        .set(subject.toDocument());
   }
 
   @override

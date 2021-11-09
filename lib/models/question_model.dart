@@ -1,33 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+enum QuestionType {
+  shortAnswer,
+  paragraph,
+  choice,
+  checkBox,
+  dropdown,
+  addFile,
+  titleAndDescription,
+}
+
 class Question extends Equatable {
   final Map question;
-  final String questionType;
+  final QuestionType type;
   final int questionNo;
 
   Question(
-      {required this.question,
-      required this.questionType,
-      required this.questionNo});
+      {required this.question, required this.type, required this.questionNo});
 
   static Question empty =
-      Question(question: {}, questionType: '', questionNo: 0);
+      Question(question: {}, type: QuestionType.choice, questionNo: 0);
 
   Question copyWith({
     Map? question,
-    String? questionType,
+    QuestionType? type,
     int? questionNo,
   }) {
     if ((question == null || identical(question, this.question)) &&
-        (questionType == null || identical(questionType, this.questionType)) &&
+        (type == null || identical(type, this.type)) &&
         (questionNo == null || identical(questionNo, this.questionNo))) {
       return this;
     }
 
     return Question(
       question: question ?? this.question,
-      questionType: questionType ?? this.questionType,
+      type: type ?? this.type,
       questionNo: questionNo ?? this.questionNo,
     );
   }
@@ -35,7 +43,7 @@ class Question extends Equatable {
   Map<String, dynamic> toDocument() {
     return {
       'question': question,
-      'questionType': questionType,
+      'type': type.toString(),
       'questionNo': questionNo
     };
   }
@@ -43,7 +51,10 @@ class Question extends Equatable {
   factory Question.fromMap(Map? data) {
     return Question(
         question: data != null ? data['question'] : {},
-        questionType: data != null ? data['questionType'] : '',
+        type: data != null
+            ? QuestionType.values
+                .firstWhere((e) => e.toString() == data['type'])
+            : QuestionType.choice,
         questionNo: data != null ? data['questionNo'] : []);
   }
 
@@ -52,12 +63,15 @@ class Question extends Equatable {
     final data = doc.data();
     return Question(
         question: data != null ? data['question'] : {},
-        questionType: data != null ? data['questionType'] : '',
+        type: data != null
+            ? QuestionType.values
+                .firstWhere((e) => e.toString() == data['type'])
+            : QuestionType.choice,
         questionNo: data != null ? data['questionNo'] : []);
   }
 
   @override
-  List<Object?> get props => [question, questionType, questionNo];
+  List<Object?> get props => [question, type, questionNo];
 }
 
 class Section extends Equatable {
