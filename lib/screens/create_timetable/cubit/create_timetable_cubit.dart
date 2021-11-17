@@ -63,6 +63,7 @@ class CreateTimetableCubit extends Cubit<CreateTimetableState> {
             state.endTime.minute),
         desc: state.desc,
         timeDesc: state.timeDesc));
+    emit(state);
     resetSubject();
   }
 

@@ -10,6 +10,7 @@ import 'base_auth_repository.dart';
 class AuthRepository extends BaseAuthRepository {
   final FirebaseFirestore _firebaseFirestore;
   final auth.FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   AuthRepository({
     FirebaseFirestore? firebaseFirestore,
@@ -23,25 +24,18 @@ class AuthRepository extends BaseAuthRepository {
   @override
   Future<auth.User?> signUpWithGoogle() async {
     try {
-      print("signin");
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      print("googleuser");
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
 
-      print("google auth");
       final credential = auth.GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
 
-      print(credential);
       final userCredential =
           await _firebaseAuth.signInWithCredential(credential);
 
-      print(_firebaseAuth.currentUser);
-      print("user");
-      print(userCredential.user);
       _firebaseFirestore
           .collection(Paths.users)
           .doc(userCredential.user?.uid)
@@ -103,6 +97,7 @@ class AuthRepository extends BaseAuthRepository {
 
   @override
   Future<void> logOut() async {
+    await _googleSignIn.disconnect();
     await _firebaseAuth.signOut();
   }
 }

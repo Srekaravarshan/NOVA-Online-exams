@@ -13,6 +13,8 @@ class ClassesScreenArgs {
 }
 
 class ClassesScreen extends StatefulWidget {
+  const ClassesScreen({Key? key}) : super(key: key);
+
   @override
   State<ClassesScreen> createState() => _ClassesScreenState();
 }
@@ -21,9 +23,6 @@ class _ClassesScreenState extends State<ClassesScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ClassesBloc, ClassesState>(listener: (context, state) {
-      print('classes listener');
-      print(state.status);
-      print(state.classes);
       if (state.status == ClassStatus.error) {
         showDialog(
           context: context,
@@ -36,10 +35,11 @@ class _ClassesScreenState extends State<ClassesScreen> {
             title: const Text('Classes'),
           ),
           body: _buildBody(state),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
             onPressed: () =>
                 Navigator.of(context).pushNamed(CreateClassScreen.routeName),
-            child: const Icon(Icons.add),
+            label: const Text('New Class'),
+            icon: const Icon(Icons.add),
           ));
     });
   }
@@ -54,23 +54,31 @@ class _ClassesScreenState extends State<ClassesScreen> {
             context.read<ClassesBloc>().add(ClassesLoadUser(
                 userId: context.read<AuthBloc>().state.user!.uid));
           },
-          child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) => InkWell(
-              onTap: () {
-                print('ontap class');
-                print(state.classes[index].id);
-                print(state.classes[index].name);
-                Navigator.of(context).pushNamed(ClassroomScreen.routeName,
-                    arguments:
-                        ClassroomScreenArgs(classId: state.classes[index].id));
-              },
-              child: ListTile(
-                title: Text(state.classes[index].name),
-                subtitle: Text(state.classes[index].section ?? ''),
-              ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                addVerticalSpace(15),
+                ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) => InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(ClassroomScreen.routeName,
+                          arguments: ClassroomScreenArgs(
+                              classId: state.classes[index].id));
+                    },
+                    child: classCard(
+                        i: index,
+                        title: state.classes[index].name,
+                        description: state.classes[index].teachers[0] ?? '',
+                        context: context),
+                  ),
+                  shrinkWrap: true,
+                  itemCount: state.classes.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      addVerticalSpace(15),
+                ),
+              ],
             ),
-            shrinkWrap: true,
-            itemCount: state.classes.length,
           ),
         );
     }

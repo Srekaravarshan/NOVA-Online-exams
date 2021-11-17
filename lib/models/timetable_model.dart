@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:exam/constants/constants.dart';
 import 'package:exam/screens/screens.dart';
 import 'package:flutter/material.dart';
 
@@ -61,10 +62,10 @@ class Timetable extends Equatable {
                 arguments: TimetableSubjectScreenArgs(classroom: classroom));
           },
           cells: <DataCell>[
-            DataCell(Text(e.date.toString())),
+            DataCell(Text(dateFormat.format(e.date))),
             DataCell(Text(e.subject)),
-            DataCell(Text(e.startTime.toString())),
-            DataCell(Text(e.endTime.toString())),
+            DataCell(Text(timeFormat.format(e.startTime))),
+            DataCell(Text(timeFormat.format(e.endTime))),
           ]);
     }).toList();
   }

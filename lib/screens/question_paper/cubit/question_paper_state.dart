@@ -10,6 +10,7 @@ enum QuestionPaperStatus {
 }
 
 class QuestionPaperState extends Equatable {
+  final int sectionIndex, questionIndex;
   final String set;
   final String mode;
   final String qpStatus;
@@ -26,10 +27,14 @@ class QuestionPaperState extends Equatable {
       required this.id,
       required this.sections,
       required this.status,
-      required this.failure});
+      required this.failure,
+      required this.questionIndex,
+      required this.sectionIndex});
 
   factory QuestionPaperState.initial() {
     return const QuestionPaperState(
+        questionIndex: -1,
+        sectionIndex: -1,
         sections: [],
         status: QuestionPaperStatus.initial,
         failure: Failure(),
@@ -40,6 +45,8 @@ class QuestionPaperState extends Equatable {
   }
 
   QuestionPaperState copyWith({
+    int? sectionIndex,
+    int? questionIndex,
     String? set,
     String? mode,
     String? qpStatus,
@@ -48,7 +55,10 @@ class QuestionPaperState extends Equatable {
     QuestionPaperStatus? status,
     Failure? failure,
   }) {
-    if ((set == null || identical(set, this.set)) &&
+    if ((sectionIndex == null || identical(sectionIndex, this.sectionIndex)) &&
+        (questionIndex == null ||
+            identical(questionIndex, this.questionIndex)) &&
+        (set == null || identical(set, this.set)) &&
         (mode == null || identical(mode, this.mode)) &&
         (qpStatus == null || identical(qpStatus, this.qpStatus)) &&
         (sections == null || identical(sections, this.sections)) &&
@@ -59,6 +69,8 @@ class QuestionPaperState extends Equatable {
     }
 
     return QuestionPaperState(
+      sectionIndex: sectionIndex ?? this.sectionIndex,
+      questionIndex: questionIndex ?? this.questionIndex,
       set: set ?? this.set,
       mode: mode ?? this.mode,
       qpStatus: qpStatus ?? this.qpStatus,
@@ -70,5 +82,15 @@ class QuestionPaperState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [sections, status, failure];
+  List<Object?> get props => [
+        sectionIndex,
+        questionIndex,
+        set,
+        mode,
+        qpStatus,
+        sections,
+        id,
+        status,
+        failure
+      ];
 }

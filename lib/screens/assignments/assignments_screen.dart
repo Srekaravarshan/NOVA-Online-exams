@@ -1,6 +1,5 @@
 import 'package:exam/models/models.dart';
 import 'package:exam/repositories/repositories.dart';
-import 'package:exam/screens/create_assignment/create_assignment_screen.dart';
 import 'package:exam/screens/screens.dart';
 import 'package:exam/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -46,8 +45,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AssignmentsBloc, AssignmentsState>(
       listener: (context, state) {
-        print('listener status');
-        print(state.status);
         if (state.status == AssignmentsStatus.error) {
           showDialog(
             context: context,
@@ -56,19 +53,18 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         }
       },
       builder: (context, state) {
-        print('status');
-        print(state.status);
         return Scaffold(
           appBar: AppBar(
               // title: Text(state.user.username),
               ),
           body: _buildBody(state),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: FloatingActionButton.extended(
               onPressed: () => Navigator.of(context).pushNamed(
                   CreateAssignmentScreen.routeName,
                   arguments: CreateAssignmentScreenArgs(
                       classId: widget.classId, subjectId: widget.subjectId)),
-              child: const Icon(Icons.add)),
+              label: const Text('Add Materials'),
+              icon: const Icon(Icons.add)),
         );
       },
     );
@@ -97,17 +93,18 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         );
     }
   }
-
-  Widget buildFile(BuildContext context, Assignment assignment) => ListTile(
-        title: Text(
-          assignment.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
-            color: Colors.blue,
-          ),
-        ),
-        onTap: () => Navigator.of(context).pushNamed(AssignmentScreen.routeName,
-            arguments: AssignmentScreenArgs(assignment: assignment)),
-      );
 }
+
+// Widget buildFile(BuildContext context, Assignment assignment) => ListTile(
+//       title: Text(
+//         assignment.title,
+//         style: const TextStyle(
+//           fontWeight: FontWeight.bold,
+//           decoration: TextDecoration.underline,
+//           color: Colors.blue,
+//         ),
+//       ),
+//       onTap: () => Navigator.of(context).pushNamed(AssignmentScreen.routeName,
+//           arguments: AssignmentScreenArgs(assignment: assignment)),
+//     );
+Widget buildFile(BuildContext context, Assignment assignment) => Container();

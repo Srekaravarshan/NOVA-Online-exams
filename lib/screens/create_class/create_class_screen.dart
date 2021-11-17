@@ -3,11 +3,14 @@ import 'package:exam/repositories/repositories.dart';
 import 'package:exam/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'cubit/create_class_cubit.dart';
 
 class CreateClassScreen extends StatelessWidget {
   static const String routeName = '/createClass';
+
+  CreateClassScreen({Key? key}) : super(key: key);
 
   static Route route() {
     return PageRouteBuilder(
@@ -37,14 +40,6 @@ class CreateClassScreen extends StatelessWidget {
             if (state.status == CreateClassStatus.success) {
               _formKey.currentState?.reset();
               context.read<CreateClassCubit>().reset();
-
-              Scaffold.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 1),
-                  content: Text('Class Created'),
-                ),
-              );
             } else if (state.status == CreateClassStatus.error) {
               showDialog(
                 context: context,
@@ -66,45 +61,40 @@ class CreateClassScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          TextFormField(
-                            decoration: InputDecoration(hintText: 'Class name'),
-                            onChanged: (value) => context
-                                .read<CreateClassCubit>()
-                                .nameChanged(value),
-                            validator: (value) => value!.trim().isEmpty
-                                ? 'Name cannot be empty.'
-                                : null,
-                          ),
-                          TextFormField(
-                            decoration:
-                                const InputDecoration(hintText: 'Section'),
-                            onChanged: (value) => context
-                                .read<CreateClassCubit>()
-                                .sectionChanged(value),
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(hintText: 'Room'),
+                          textField(
+                              hintText: 'Class name',
+                              onChanged: (value) => context
+                                  .read<CreateClassCubit>()
+                                  .nameChanged(value),
+                              validator: (value) => value!.trim().isEmpty
+                                  ? 'Name cannot be empty.'
+                                  : null),
+                          addVerticalSpace(15),
+                          textField(
+                              hintText: 'Section',
+                              onChanged: (value) => context
+                                  .read<CreateClassCubit>()
+                                  .sectionChanged(value)),
+                          addVerticalSpace(15),
+                          textField(
+                            hintText: 'Room',
                             onChanged: (value) => context
                                 .read<CreateClassCubit>()
                                 .roomChanged(value),
                           ),
-                          TextFormField(
-                            decoration:
-                                const InputDecoration(hintText: 'Subject'),
-                            onChanged: (value) => context
-                                .read<CreateClassCubit>()
-                                .subjectChanged(value),
-                          ),
-                          const SizedBox(height: 28.0),
-                          RaisedButton(
-                            elevation: 1.0,
-                            color: Theme.of(context).primaryColor,
-                            textColor: Colors.white,
-                            onPressed: () => _submitForm(
-                              context,
-                              state.status == CreateClassStatus.submitting,
+                          addVerticalSpace(30),
+                          SizedBox(
+                            height: 58,
+                            child: ElevatedButton(
+                              onPressed: () => _submitForm(
+                                context,
+                                state.status == CreateClassStatus.submitting,
+                              ),
+                              child: Text(
+                                'Submit',
+                                style: GoogleFonts.lato(fontSize: 16),
+                              ),
                             ),
-                            child: const Text('Class'),
                           ),
                         ],
                       ),

@@ -32,10 +32,6 @@ class CreateClassCubit extends Cubit<CreateClassState> {
     emit(state.copyWith(section: value, status: CreateClassStatus.initial));
   }
 
-  void subjectChanged(String value) {
-    emit(state.copyWith(subject: value, status: CreateClassStatus.initial));
-  }
-
   void roomChanged(String value) {
     emit(state.copyWith(room: value, status: CreateClassStatus.initial));
   }

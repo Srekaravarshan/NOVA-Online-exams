@@ -41,8 +41,6 @@ class AssignmentsBloc extends Bloc<AssignmentsEvent, AssignmentsState> {
           await _assignmentRepository.getAssignment(assignmentId: id);
       List<FirebaseFile> files =
           await _storageRepository.listAll('materials/$id/');
-      print(assignment.title);
-      print(files.length);
       assignment = assignment.copyWith(materials: files);
       assignments.add(assignment);
     }

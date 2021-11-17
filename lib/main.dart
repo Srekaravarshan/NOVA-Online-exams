@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:exam/screens/screens.dart';
+import 'package:exam/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/blocs.dart';
@@ -15,7 +17,9 @@ void main() async {
   await Firebase.initializeApp();
   Bloc.observer = SimpleBlocObserver();
   EquatableConfig.stringify = kDebugMode;
-  runApp(MyApp());
+  SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(statusBarColor: Colors.blue));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -54,9 +58,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'NOVA Exams',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-              primarySwatch: Colors.blue,
-              scaffoldBackgroundColor: Colors.grey[50]),
+          theme: lightTheme,
           onGenerateRoute: CustomRouter.onGenerateRoute,
           initialRoute: SplashScreen.routeName,
         ),

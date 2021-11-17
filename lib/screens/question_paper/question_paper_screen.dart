@@ -16,6 +16,8 @@ class QuestionPaperScreenArgs {
 class QuestionPaperScreen extends StatelessWidget {
   static const String routeName = '/createQuestionPaper';
 
+  QuestionPaperScreen({Key? key}) : super(key: key);
+
   static Route route({required QuestionPaperScreenArgs args}) {
     return PageRouteBuilder(
         settings: const RouteSettings(name: routeName),
@@ -25,7 +27,11 @@ class QuestionPaperScreen extends StatelessWidget {
                   questionPaperRepository:
                       context.read<QuestionPaperRepository>())
                 ..add(QuestionPaperLoadUser(
-                    classroom: args.classroom, setIndex: args.setIndex)),
+                    classroom: args.classroom,
+                    setIndex: args.setIndex,
+                    questionIndex: -1,
+                    sections: [],
+                    sectionIndex: -1)),
               child: QuestionPaperScreen(),
             ));
   }
@@ -37,58 +43,11 @@ class QuestionPaperScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Question paper'),
-        ),
-        bottomNavigationBar: Container(
-            decoration: const BoxDecoration(color: Colors.white),
-            width: MediaQuery.of(context).size.width,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  InkWell(
-                      onTap: () {},
-                      child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(Icons.add, size: 24))),
-                  InkWell(
-                      onTap: () {},
-                      child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(Icons.text_fields_outlined, size: 24))),
-                  InkWell(
-                      onTap: () {},
-                      child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(Icons.image_outlined, size: 24))),
-                  InkWell(
-                      onTap: () {},
-                      child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child:
-                              Icon(Icons.video_collection_outlined, size: 24))),
-                  InkWell(
-                      onTap: () {},
-                      child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Icon(Icons.splitscreen_outlined, size: 24))),
-                ],
-              ),
-            )),
         body: BlocConsumer<QuestionPaperBloc, QuestionPaperState>(
           listener: (context, state) {
             if (state.status == QuestionPaperStatus.success) {
               // _formKey.currentState?.reset();
               // context.read<QuestionPaperCubit>().reset();
-
-              Scaffold.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 1),
-                  content: Text('Class Created'),
-                ),
-              );
             } else if (state.status == QuestionPaperStatus.error) {
               showDialog(
                 context: context,
@@ -98,95 +57,222 @@ class QuestionPaperScreen extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  if (state.status == QuestionPaperStatus.submitting)
-                    const LinearProgressIndicator(),
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Form(
-                      key: _formKey,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: state.sections.length,
-                              itemBuilder: (sectionContext, sectionIndex) =>
-                                  Container(
-                                child: Column(
-                                  children: [
-                                    Text(state.sections[sectionIndex].title),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: state.sections[sectionIndex]
-                                          .questions.length,
-                                      itemBuilder:
-                                          (questionContext, questionIndex) =>
-                                              _questionWidget(
-                                                  type: state
-                                                      .sections[sectionIndex]
-                                                      .questions[questionIndex]
-                                                      .type,
-                                                  question: state
-                                                      .sections[sectionIndex]
-                                                      .questions[questionIndex]
-                                                      .question,
-                                                  sectionIndex: sectionIndex,
-                                                  questionIndex: questionIndex,
-                                                  context: context),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Question paper'),
+                  actions: [
+                    TextButton(
+                      child: const Text('Save',
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () => context.read<QuestionPaperBloc>().add(
+                          UpdateQuestionPaper(QuestionPaper(
+                              status: state.qpStatus,
+                              sections: state.sections,
+                              mode: state.mode,
+                              id: state.id,
+                              set: state.set))),
+                    )
+                  ],
+                ),
+                bottomNavigationBar: Container(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    width: MediaQuery.of(context).size.width,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: bottomTools(context: context, state: state),
+                    )),
+                body: _buildBody(context: context, state: state));
           },
         ),
       ),
     );
   }
 
-  Widget _questionWidget(
-      {required String type,
-      required Map question,
-      required int sectionIndex,
-      required int questionIndex,
-      required BuildContext context}) {
-    return Container(
+  Widget _buildBody(
+      {required BuildContext context, required QuestionPaperState state}) {
+    return SingleChildScrollView(
       child: Column(
         children: [
-          TextFormField(
-            decoration: const InputDecoration(hintText: 'Class name'),
-            onChanged: (value) => context
-                .read<QuestionPaperBloc>()
-                .questionChanged(
-                    value: value,
-                    sectionIndex: sectionIndex,
-                    questionIndex: questionIndex),
+          if (state.status == QuestionPaperStatus.submitting)
+            const LinearProgressIndicator(),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [_section(state, context)],
+                ),
+              ),
+            ),
           ),
-          _questionChoiceWidget(type)
         ],
       ),
     );
   }
 
-  Widget _questionChoiceWidget(String type) {
-    switch (type) {
-      case 'option':
-        return Container();
+  Widget _section(QuestionPaperState state, BuildContext context) {
+    return ListView.separated(
+      separatorBuilder: (context, index) =>
+          const Divider(height: 4, thickness: 1),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: state.sections.length,
+      itemBuilder: (sectionContext, sIndex) {
+        return GestureDetector(
+          onTap: () =>
+              context.read<QuestionPaperBloc>().add(ChangeSectionIndex(sIndex)),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: const BorderRadius.all(Radius.circular(4))),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: state.sectionIndex == sIndex
+                              ? Colors.blue
+                              : Colors.transparent,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4))),
+                      width: 5,
+                      height: 50,
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: textViewField(
+                          hintText: 'Class name',
+                          onChanged: (value) => context
+                              .read<QuestionPaperBloc>()
+                              .sectionTitleChanged(
+                                  value: value,
+                                  sectionIndex: sIndex,
+                                  sections: state.sections),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              _question(state, sIndex, context)
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _question(QuestionPaperState state, int sIndex, BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: state.sections[sIndex].questions.length,
+      itemBuilder: (questionContext, questionIndex) {
+        return GestureDetector(
+          onTap: () => context
+              .read<QuestionPaperBloc>()
+              .add(ChangeQuestionIndex(questionIndex)),
+          child: _questionWidget(
+              type: state.sections[sIndex].questions[questionIndex].type,
+              question: state.sections[sIndex].questions[questionIndex],
+              sectionIndex: sIndex,
+              questionIndex: questionIndex,
+              context: context,
+              state: state),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) =>
+          addVerticalSpace(8),
+    );
+  }
+
+  Widget _questionWidget(
+      {required QuestionType type,
+      required Question question,
+      required int sectionIndex,
+      required int questionIndex,
+      required BuildContext context,
+      required QuestionPaperState state}) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black26),
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: state.questionIndex == questionIndex
+                    ? Colors.blue
+                    : Colors.transparent,
+                borderRadius: const BorderRadius.all(Radius.circular(4))),
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  if (question.isQuestion) textViewField(hintText: 'Question'),
+                  DropdownButton<String>(
+                    value: dropdownValues[question.type],
+                    onChanged: (newValue) {
+                      print('dropdown');
+                      print(newValue);
+                      print(dropdownValues.keys.firstWhere(
+                          (k) => dropdownValues[k] == newValue,
+                          orElse: () => QuestionType.paragraph));
+                      context.read<QuestionPaperBloc>().add(EditQuestionType(
+                            type: dropdownValues.keys.firstWhere(
+                                (k) => dropdownValues[k] == newValue,
+                                orElse: () => QuestionType.paragraph),
+                            sectionIndex: sectionIndex,
+                            questionIndex: questionIndex,
+                          ));
+                    },
+                    items: dropdownValues.keys
+                        .map<DropdownMenuItem<String>>((QuestionType value) {
+                      return DropdownMenuItem<String>(
+                        value: dropdownValues[value],
+                        child: Text(dropdownValues[value]!),
+                      );
+                    }).toList(),
+                  ),
+                  _questionChoiceWidget(question)
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _questionChoiceWidget(Question question) {
+    switch (question.type) {
+      case QuestionType.choice:
+        return choiceWidget(question);
+      case QuestionType.titleAndDescription:
+        return titleAndDescriptionWidget(question);
+      case QuestionType.addFile:
+        return addFileWidget(question);
+      case QuestionType.checkBox:
+        return checkBoxWidget(question);
+      case QuestionType.dropdown:
+        return dropdownWidget(question);
+      case QuestionType.shortAnswer:
+        return shortAnswerWidget(question);
+      case QuestionType.paragraph:
+        return paragraphWidget(question);
+      case QuestionType.image:
+        return imageWidget(question);
+      case QuestionType.video:
+        return videoWidget(question);
       default:
         return Container();
     }

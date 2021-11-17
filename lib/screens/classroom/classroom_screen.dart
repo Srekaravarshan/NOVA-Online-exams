@@ -3,6 +3,7 @@ import 'package:exam/repositories/repositories.dart';
 import 'package:exam/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../screens.dart';
 import 'bloc/classroom_bloc.dart';
@@ -62,11 +63,12 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               ],
             ),
             body: _buildBody(state),
-            floatingActionButton: FloatingActionButton(
+            floatingActionButton: FloatingActionButton.extended(
+              label: const Text('Add Subject'),
               onPressed: () => Navigator.of(context).pushNamed(
                   CreateSubjectScreen.routeName,
                   arguments: CreateSubjectScreenArgs(classId: widget.classId)),
-              child: const Icon(Icons.add),
+              icon: const Icon(Icons.add),
             ));
       },
     );
@@ -81,25 +83,48 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           onRefresh: () async {},
           child: Column(
             children: [
-              DataTable(
-                sortColumnIndex: 0,
-                columns: Timetable.getTableHeaders(),
-                rows: Timetable.getTableRows(
-                    state.classroom.timetable, context, state.classroom),
+              addVerticalSpace(15),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  showCheckboxColumn: false,
+                  headingRowColor:
+                      MaterialStateProperty.all<Color>(Colors.blue.shade50),
+                  showBottomBorder: true,
+                  headingTextStyle:
+                      GoogleFonts.lato(fontSize: 16, color: Colors.black),
+                  dataTextStyle:
+                      const TextStyle(fontSize: 14, color: Colors.black87),
+                  sortAscending: true,
+                  sortColumnIndex: 0,
+                  columns: Timetable.getTableHeaders(),
+                  rows: Timetable.getTableRows(
+                      state.classroom.timetable, context, state.classroom),
+                ),
               ),
-              ListView.builder(
+              addVerticalSpace(30),
+              Text('Subjects',
+                  style: GoogleFonts.lato(
+                      fontSize: Theme.of(context).textTheme.headline5?.fontSize,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic)),
+              addVerticalSpace(15),
+              ListView.separated(
                 itemBuilder: (BuildContext context, int index) => InkWell(
                   onTap: () => Navigator.of(context).pushNamed(
                       AssignmentsScreen.routeName,
                       arguments: AssignmentsScreenArgs(
                           classId: widget.classId,
                           subjectId: state.subjects[index].id)),
-                  child: ListTile(
-                    title: Text(state.subjects[index].name),
-                  ),
+                  child: subjectCard(
+                      title: state.subjects[index].name,
+                      i: index,
+                      context: context),
                 ),
                 shrinkWrap: true,
                 itemCount: state.subjects.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    addVerticalSpace(15),
               ),
             ],
           ),

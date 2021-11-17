@@ -36,16 +36,21 @@ class QuestionPaperRepository extends BaseQuestionPaperRepository {
   @override
   Future<void> updateQuestionPaper(
       {required QuestionPaper questionPaper}) async {
+    print('UpdateQuesitonPaper');
+    print(questionPaper.id);
     await _firebaseFirestore
         .collection(Paths.questionPapers)
         .doc(questionPaper.id)
-        .update({});
+        .update(questionPaper.toDocument());
   }
 
   @override
   Future<QuestionPaper> getQuestionPaper({required String id}) async {
+    print('getQuestionPaper');
+    print(id);
     DocumentSnapshot<Map> doc =
         await _firebaseFirestore.collection(Paths.questionPapers).doc(id).get();
+    print(doc.id);
     return QuestionPaper.fromDocument(doc) ?? QuestionPaper.empty;
   }
 }

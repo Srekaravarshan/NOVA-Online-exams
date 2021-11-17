@@ -75,9 +75,8 @@ class CreateSubjectScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          TextFormField(
-                            decoration:
-                                InputDecoration(hintText: 'Subject name'),
+                          textField(
+                            hintText: 'Subject name',
                             onChanged: (value) => context
                                 .read<CreateSubjectCubit>()
                                 .nameChanged(value),
@@ -85,16 +84,16 @@ class CreateSubjectScreen extends StatelessWidget {
                                 ? 'Name cannot be empty.'
                                 : null,
                           ),
-                          const SizedBox(height: 28.0),
-                          RaisedButton(
-                            elevation: 1.0,
-                            color: Theme.of(context).primaryColor,
-                            textColor: Colors.white,
-                            onPressed: () => _submitForm(
-                              context,
-                              state.status == CreateSubjectStatus.submitting,
+                          addVerticalSpace(30),
+                          SizedBox(
+                            height: 58,
+                            child: ElevatedButton(
+                              onPressed: () => _submitForm(
+                                context,
+                                state.status == CreateSubjectStatus.submitting,
+                              ),
+                              child: const Text('Submit'),
                             ),
-                            child: const Text('Subject'),
                           ),
                         ],
                       ),

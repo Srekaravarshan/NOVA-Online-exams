@@ -91,9 +91,8 @@ class CreateAssignmentScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          TextFormField(
-                            decoration:
-                                const InputDecoration(hintText: 'Title'),
+                          textField(
+                            hintText: 'Title',
                             onChanged: (value) => context
                                 .read<CreateAssignmentCubit>()
                                 .titleChanged(value),
@@ -101,25 +100,24 @@ class CreateAssignmentScreen extends StatelessWidget {
                                 ? 'Name cannot be empty.'
                                 : null,
                           ),
-                          SizedBox(height: 20),
-                          TextFormField(
-                            decoration:
-                                const InputDecoration(hintText: 'Description'),
+                          addVerticalSpace(15),
+                          textField(
+                            hintText: 'Description',
                             onChanged: (value) => context
                                 .read<CreateAssignmentCubit>()
                                 .descriptionChanged(value),
                           ),
-                          const SizedBox(height: 28.0),
-                          RaisedButton(
-                            elevation: 1.0,
-                            color: Theme.of(context).primaryColor,
-                            textColor: Colors.white,
-                            onPressed: () => _submitForm(
-                                context,
-                                state.status ==
-                                    CreateAssignmentStatus.submitting,
-                                state),
-                            child: const Text('Assignment'),
+                          addVerticalSpace(30),
+                          SizedBox(
+                            height: 58,
+                            child: ElevatedButton(
+                              onPressed: () => _submitForm(
+                                  context,
+                                  state.status ==
+                                      CreateAssignmentStatus.submitting,
+                                  state),
+                              child: const Text('Submit'),
+                            ),
                           ),
                         ],
                       ),
